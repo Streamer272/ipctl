@@ -3,7 +3,6 @@ module github.com/Streamer272/ipcl
 go 1.17
 
 require (
-	github.com/Streamer272/ddos v1.0.2
 	github.com/akamensky/argparse v1.3.1
 	github.com/fatih/color v1.13.0
 )
