@@ -54,7 +54,6 @@ func getCurrentIp() (string, error) {
 
 func didIpChange() (bool, error) {
 	currentIp, err := getCurrentIp()
-	fmt.Printf("ip = \"%v\", currentIp = \"%v\", err = \"%v\"\n", ip, currentIp, err)
 	if err != nil {
 		return false, err
 	}

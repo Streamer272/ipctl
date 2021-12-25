@@ -6,3 +6,7 @@
 main
 ipcl
 build
+
+# other
+change-ip.py
+venv
