@@ -11,7 +11,7 @@ import (
 func main() {
 	parser := argparse.NewParser("ipcl", "IP change listener")
 
-	interval := parser.Int("i", "interval", &argparse.Options{Required: false, Help: "Request interval", Default: 2000})
+	interval := parser.Int("i", "interval", &argparse.Options{Required: false, Help: "Request interval", Default: 60000})
 	callback := parser.String("c", "callback", &argparse.Options{Required: false, Help: "IP change callback", Default: "echo \"IP changed to $IP!\""})
 
 	err := parser.Parse(os.Args)
