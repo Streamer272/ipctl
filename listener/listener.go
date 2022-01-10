@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// TODO: save me to file
 var ip string = ""
 
 type Response struct {

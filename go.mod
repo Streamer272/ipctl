@@ -1,4 +1,4 @@
-module github.com/Streamer272/ipcl
+module github.com/Streamer272/ipctl
 
 go 1.17
 

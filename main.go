@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	parser := argparse.NewParser("ipcl", "IP change listener")
+	parser := argparse.NewParser("ipctl", "IP controller\nListen to IP change and change your DNS's records dynamically")
 
 	interval := parser.Int("i", "interval", &argparse.Options{Required: false, Help: "Request interval", Default: 60000})
 	callback := parser.String("c", "callback", &argparse.Options{Required: false, Help: "IP change callback", Default: "echo \"IP changed to $IP!\""})
