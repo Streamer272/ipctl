@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Streamer272/ipcl/listener"
+	"github.com/Streamer272/ipctl/listener"
 	"github.com/akamensky/argparse"
 	"os"
 	"strings"

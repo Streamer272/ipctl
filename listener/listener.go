@@ -3,7 +3,7 @@ package listener
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Streamer272/ipcl/logger"
+	"github.com/Streamer272/ipctl/logger"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -82,15 +82,11 @@ func Listen(interval int, command string, args []string) {
 
 		if changed {
 			for i := 0; i < len(args); i++ {
-				if strings.Contains(args[i], "$IP") {
-					args[i] = strings.ReplaceAll(args[i], "$IP", ip)
-				}
+				args[i] = strings.ReplaceAll(args[i], "#IP", ip)
 			}
 			command := exec.Command(command, args...)
 			for i := 0; i < len(args); i++ {
-				if strings.Contains(args[i], "$IP") {
-					args[i] = strings.ReplaceAll(args[i], ip, "$IP")
-				}
+				args[i] = strings.ReplaceAll(args[i], ip, "#IP")
 			}
 
 			command.Stdin = os.Stdin
