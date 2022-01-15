@@ -3,6 +3,7 @@ package listener
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Streamer272/ipctl/handle_error"
 	"github.com/Streamer272/ipctl/logger"
 	"io/ioutil"
 	"net/http"
@@ -29,7 +30,7 @@ func (err RequestNotSuccessful) Error() string {
 	return err.response.IP
 }
 
-func getCurrentIp() (string, error) {
+func GetCurrentIp() (string, error) {
 	response, err := http.Get("https://api.my-ip.io/ip.json")
 	if err != nil {
 		return "", err
@@ -54,7 +55,7 @@ func getCurrentIp() (string, error) {
 }
 
 func didIpChange() (bool, error) {
-	currentIp, err := getCurrentIp()
+	currentIp, err := GetCurrentIp()
 	if err != nil {
 		return false, err
 	}
@@ -81,18 +82,14 @@ func Listen(interval int, command string, args []string) {
 		}
 
 		if changed {
-			for i := 0; i < len(args); i++ {
-				args[i] = strings.ReplaceAll(args[i], "#IP", ip)
-			}
-			command := exec.Command(command, args...)
-			for i := 0; i < len(args); i++ {
-				args[i] = strings.ReplaceAll(args[i], ip, "#IP")
-			}
+			err := os.Setenv("IP", ip)
+			handle_error.HandleError(err)
+			command := exec.Command("/usr/bin/bash", "-c", fmt.Sprintf("\"%v\"", strings.ReplaceAll(command, "\"", "\\\"")))
 
 			command.Stdin = os.Stdin
 			command.Stdout = os.Stdout
 			command.Stderr = os.Stderr
-			err := command.Run()
+			err = command.Run()
 			if err != nil {
 				log.Log("ERROR", fmt.Sprintf("Error occurred while listening to IP change, err = %v\n", err))
 			}

@@ -17,3 +17,7 @@ func Get(name string) interface{} {
 
 	return 0
 }
+
+func Set(name string, value interface{}) {
+	// TODO
+}
