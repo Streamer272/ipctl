@@ -25,6 +25,8 @@ func main() {
 	versionCommand := parser.NewCommand("version", "Display program version")
 
 	initCommand := parser.NewCommand("init", "Initialize ipctl")
+	dontEnableFlag := initCommand.Flag("D", "dont-enable", &argparse.Options{Required: false, Help: "Don't enable systemctl service", Default: false})
+
 	listenCommand := parser.NewCommand("listen", "Listen to IP change")
 
 	versionFlag := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
@@ -45,7 +47,7 @@ func main() {
 	}
 
 	if initCommand.Happened() {
-		config.Init()
+		config.Init(*dontEnableFlag)
 	}
 	if listenCommand.Happened() {
 		interval, err := strconv.Atoi(config.Get("interval"))

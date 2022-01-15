@@ -84,8 +84,8 @@ func Listen(command string, interval int) {
 		if changed {
 			err := os.Setenv("IP", ip)
 			handle_error.HandleError(err)
-			command := exec.Command("/usr/bin/bash", "-c", fmt.Sprintf("\"%v\"", strings.ReplaceAll(command, "\"", "\\\"")))
 
+			command := exec.Command("/usr/bin/bash", "-c", fmt.Sprintf("\"%v\"", strings.ReplaceAll(command, "\"", "\\\"")))
 			command.Stdin = os.Stdin
 			command.Stdout = os.Stdout
 			command.Stderr = os.Stderr

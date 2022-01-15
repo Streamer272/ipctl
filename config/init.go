@@ -6,6 +6,7 @@ import (
 	"github.com/Streamer272/ipctl/options"
 	"io/ioutil"
 	"os"
+	"os/exec"
 )
 
 func exists(path string) bool {
@@ -13,7 +14,7 @@ func exists(path string) bool {
 	return err == nil
 }
 
-func Init() {
+func Init(dontEnable bool) {
 	if exists("/etc/ipctl/ipctl.json") {
 		return
 	}
@@ -31,5 +32,30 @@ func Init() {
 		handle_error.HandleError(err)
 	}
 
-	// TODO: init systemctl service
+	if !exists("/lib/systemd/system/ipctl.service") {
+		err := ioutil.WriteFile("/lib/systemd/system/ipctl.service", []byte(""+
+			"[Unit]\n"+
+			"Description=Listen to IP change and change your DNS' records dynamically\n"+
+			"After=network.target\n"+
+			"StartLimitIntervalSec=0\n\n"+
+			"[Service]\n"+
+			"Type=simple\n"+
+			"Restart=always\n"+
+			"RestartSec=1\n"+
+			"User=root\n"+
+			"ExecStart=ipctl listen\n\n"+
+			"[Install]\n"+
+			"WantedBy=multi-currentUser.target\n",
+		), 744)
+		handle_error.HandleError(err)
+
+		if !dontEnable {
+			command := exec.Command("systemctl", "enable", "ipctl.service")
+			command.Stdin = os.Stdin
+			command.Stdout = os.Stdout
+			command.Stderr = os.Stderr
+			err = command.Run()
+			handle_error.HandleError(err)
+		}
+	}
 }
