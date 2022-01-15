@@ -2,8 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Streamer272/ipctl/listener"
-	commandParser "github.com/Streamer272/ipctl/parser"
+	"github.com/Streamer272/ipctl/config"
 	"github.com/akamensky/argparse"
 	"os"
 )
@@ -13,17 +12,19 @@ const VERSION = "1.0"
 func main() {
 	parser := argparse.NewParser("ipctl", "IP controller\nListen to IP change and change your DNS' records dynamically")
 
-	interval := parser.Int("i", "interval", &argparse.Options{Required: false, Help: "Request interval", Default: 60000})
-	command := parser.String("c", "command", &argparse.Options{Required: false, Help: "IP change command", Default: "echo \"IP changed to $IP!\""})
-	version := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
+	helpCommand := parser.NewCommand("help", "Display help message")
+	versionCommand := parser.NewCommand("version", "Display program version")
+
+	versionFlag := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
 
 	err := parser.Parse(os.Args)
-	if err != nil {
+	if err != nil || helpCommand.Happened() {
 		fmt.Print(parser.Usage(err))
+		os.Exit(0)
 	}
 
-	if *version {
-		fmt.Printf("%v version %v\n", parser.GetName(), VERSION)
+	if *versionFlag || versionCommand.Happened() {
+		fmt.Printf("%v versionFlag %v\n", parser.GetName(), VERSION)
 		os.Exit(0)
 	}
 
@@ -32,7 +33,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	parsedCommand, args := commandParser.ParseCommand(*command)
+	config.Get("test")
 
-	listener.Listen(*interval, parsedCommand, args)
+	//parsedCommand, args := commandParser.ParseCommand(*command)
+	//listener.Listen(*interval, parsedCommand, args)
 }
