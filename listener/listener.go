@@ -72,7 +72,7 @@ func didIpChange() (bool, error) {
 	return false, nil
 }
 
-func Listen(interval int, command string, args []string) {
+func Listen(command string, interval int) {
 	log := logger.NewLogger()
 
 	for {

@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/Streamer272/ipctl/config"
+	"github.com/Streamer272/ipctl/handle_error"
+	"github.com/Streamer272/ipctl/listener"
 	"github.com/akamensky/argparse"
 	"os"
 	"runtime"
+	"strconv"
 )
 
 const VERSION = "1.0"
@@ -22,6 +25,7 @@ func main() {
 	versionCommand := parser.NewCommand("version", "Display program version")
 
 	initCommand := parser.NewCommand("init", "Initialize ipctl")
+	listenCommand := parser.NewCommand("listen", "Listen to IP change")
 
 	versionFlag := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
 
@@ -30,7 +34,6 @@ func main() {
 		fmt.Print(parser.Usage(err))
 		os.Exit(0)
 	}
-
 	if *versionFlag || versionCommand.Happened() {
 		fmt.Printf("%v versionFlag %v\n", parser.GetName(), VERSION)
 		os.Exit(0)
@@ -43,5 +46,11 @@ func main() {
 
 	if initCommand.Happened() {
 		config.Init()
+	}
+	if listenCommand.Happened() {
+		interval, err := strconv.Atoi(config.Get("interval"))
+		handle_error.HandleError(err)
+
+		listener.Listen(config.Get("command"), interval)
 	}
 }
