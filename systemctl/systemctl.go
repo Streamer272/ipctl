@@ -1,29 +1,29 @@
 package systemctl
 
 func Enable() {
-	execSystemctl("enable")
+	execSystemctl("enable", true)
 }
 
 func Disable() {
-	execSystemctl("disable")
+	execSystemctl("disable", true)
 }
 
 func Status() {
-	execSystemctl("status")
+	execSystemctl("status", true)
 }
 
 func Start() {
-	execSystemctl("start")
+	execSystemctl("start", true)
 }
 
 func Stop() {
-	execSystemctl("stop")
+	execSystemctl("stop", true)
 }
 
 func Restart() {
-	execSystemctl("restart")
+	execSystemctl("restart", true)
 }
 
 func Reload() {
-	execSystemctl("reload")
+	execSystemctl("reload", true)
 }

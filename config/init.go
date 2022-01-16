@@ -9,22 +9,27 @@ import (
 	"os/exec"
 )
 
-func exists(path string) bool {
+func pathExists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
 }
 
-func Init(dontEnable bool) {
-	if exists("/etc/ipctl/ipctl.json") {
+func Init(dontEnable bool, force bool) {
+	if pathExists("/etc/ipctl/ipctl.json") && !force {
 		return
 	}
 
-	if !exists("/etc/ipctl/ipctl.json") {
+	if !pathExists("/etc/ipctl") || force {
+		if pathExists("/etc/ipctl") && force {
+			err := os.RemoveAll("/etc/ipctl")
+			handle_error.HandleError(err)
+		}
+
 		err := os.Mkdir("/etc/ipctl", 744)
 		handle_error.HandleError(err)
 	}
 
-	if !exists("/etc/ipctl/ipctl.json") {
+	if !pathExists("/etc/ipctl/ipctl.json") || force {
 		optStr, err := json.Marshal(options.Default())
 		handle_error.HandleError(err)
 
@@ -32,7 +37,7 @@ func Init(dontEnable bool) {
 		handle_error.HandleError(err)
 	}
 
-	if !exists("/lib/systemd/system/ipctl.service") {
+	if !pathExists("/lib/systemd/system/ipctl.service") || force {
 		err := ioutil.WriteFile("/lib/systemd/system/ipctl.service", []byte(""+
 			"[Unit]\n"+
 			"Description=Listen to IP change and change your DNS' records dynamically\n"+
