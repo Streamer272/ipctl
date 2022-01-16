@@ -5,6 +5,7 @@ import (
 	"github.com/Streamer272/ipctl/constants"
 	"github.com/Streamer272/ipctl/handle_error"
 	"github.com/Streamer272/ipctl/options"
+	"github.com/Streamer272/ipctl/systemctl"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -63,5 +64,17 @@ func Init(dontEnable bool, force bool) {
 			err = command.Run()
 			handle_error.HandleError(err)
 		}
+	}
+}
+
+func Remove() {
+	if pathExists("/etc/ipctl") {
+		err := os.RemoveAll("/etc/ipctl")
+		handle_error.HandleError(err)
+	}
+	if pathExists("/lib/systemd/system/ipctl.service") {
+		systemctl.Disable()
+		err := os.RemoveAll("/lib/systemd/system/ipctl.service")
+		handle_error.HandleError(err)
 	}
 }
