@@ -16,13 +16,13 @@ func pathExists(path string) bool {
 	return err == nil
 }
 
-func Init(dontEnable bool, force bool) {
-	if pathExists("/etc/ipctl/ipctl.json") && !force {
+func Init(dontEnable bool, rewrite bool) {
+	if pathExists("/etc/ipctl/ipctl.json") && !rewrite {
 		return
 	}
 
-	if !pathExists("/etc/ipctl") || force {
-		if pathExists("/etc/ipctl") && force {
+	if !pathExists("/etc/ipctl") || rewrite {
+		if pathExists("/etc/ipctl") && rewrite {
 			err := os.RemoveAll("/etc/ipctl")
 			handle_error.HandleError(err)
 		}
@@ -31,7 +31,7 @@ func Init(dontEnable bool, force bool) {
 		handle_error.HandleError(err)
 	}
 
-	if !pathExists("/etc/ipctl/ipctl.json") || force {
+	if !pathExists("/etc/ipctl/ipctl.json") || rewrite {
 		optStr, err := json.Marshal(options.Default())
 		handle_error.HandleError(err)
 
@@ -39,7 +39,7 @@ func Init(dontEnable bool, force bool) {
 		handle_error.HandleError(err)
 	}
 
-	if !pathExists("/lib/systemd/system/ipctl.service") || force {
+	if !pathExists("/lib/systemd/system/ipctl.service") || rewrite {
 		err := ioutil.WriteFile("/lib/systemd/system/ipctl.service", []byte(""+
 			"[Unit]\n"+
 			"Description=Listen to IP change and change your DNS' records dynamically\n"+

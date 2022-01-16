@@ -31,6 +31,12 @@ func Get(name string) string {
 	}
 }
 
+func GetAll() string {
+	content, err := ioutil.ReadFile("/etc/ipctl/ipctl.json")
+	handle_error.HandleError(err)
+	return string(content)
+}
+
 func Set(name string, value string) {
 	content, err := ioutil.ReadFile("/etc/ipctl/ipctl.json")
 	handle_error.HandleError(err)

@@ -8,26 +8,26 @@ import (
 
 type Options struct {
 	Command  string `json:"command"`
-	interval string `json:"interval"`
+	Interval string `json:"interval"`
 	Current  string `json:"current"`
 }
 
 func (this *Options) GetInterval() int {
-	intValue, err := strconv.Atoi(this.interval)
+	intValue, err := strconv.Atoi(this.Interval)
 	handle_error.HandleError(err)
 	return intValue
 }
 
 func (this *Options) GetIntervalString() string {
-	return this.interval
+	return this.Interval
 }
 
 func (this *Options) SetInterval(value int) {
-	this.interval = strconv.Itoa(value)
+	this.Interval = strconv.Itoa(value)
 }
 
 func (this *Options) SetIntervalString(value string) {
-	this.interval = value
+	this.Interval = value
 }
 
 func Default() Options {
@@ -36,7 +36,7 @@ func Default() Options {
 
 	return Options{
 		Command:  "echo \"Hello World!\"",
-		interval: "60000",
+		Interval: "60000",
 		Current:  ip,
 	}
 }

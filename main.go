@@ -24,15 +24,18 @@ func main() {
 	helpCommand := parser.NewCommand("help", "Display help message")
 	versionCommand := parser.NewCommand("version", "Display program version")
 
-	initCommand := parser.NewCommand("init", "Initialize ipctl")
+	configCommand := parser.NewCommand("config", "Manage configuration")
+	getCommand := configCommand.NewCommand("get", "Show current configuration")
+	field := getCommand.String("f", "field", &argparse.Options{Required: false, Help: "Field to get", Default: ""})
+	setCommand := configCommand.NewCommand("set", "Update configuration")
+	name := setCommand.String("n", "name", &argparse.Options{Required: true, Help: "Name of field to update"})
+	value := setCommand.String("v", "value", &argparse.Options{Required: true, Help: "New value"})
+	initCommand := configCommand.NewCommand("init", "Initialize configuration")
 	dontEnableFlag := initCommand.Flag("D", "dont-enable", &argparse.Options{Required: false, Help: "Don't enable systemctl service", Default: false})
-	forceFlag := initCommand.Flag("f", "force", &argparse.Options{Required: false, Help: "Rewrite existing files", Default: false})
-	removeFlag := initCommand.Flag("r", "remove", &argparse.Options{Required: false, Help: "Remove default configuration", Default: false})
+	rewriteCommand := configCommand.NewCommand("rewrite", "Rewrite configuration to default")
+	removeCommand := configCommand.NewCommand("remove", "Remove configuration")
 
 	listenCommand := parser.NewCommand("listen", "Listen to IP change")
-
-	setCommand := parser.NewCommand("set", "Update configuration")
-	setCommand.String("n", "name", &argparse.Options{Required: true})
 
 	enableCommand := parser.NewCommand("enable", "Enable listening service")
 	disableCommand := parser.NewCommand("disable", "Disable listening service")
@@ -59,11 +62,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	if initCommand.Happened() {
-		if *removeFlag {
+	if configCommand.Happened() {
+		if getCommand.Happened() {
+			if *field == "" {
+				fmt.Printf("%v\n", config.GetAll())
+			} else {
+				fmt.Printf("%v\n", config.Get(*field))
+			}
+		}
+		if setCommand.Happened() {
+			config.Set(*name, *value)
+		}
+		if initCommand.Happened() {
+			config.Init(*dontEnableFlag, false)
+		}
+		if rewriteCommand.Happened() {
+			config.Init(*dontEnableFlag, true)
+		}
+		if removeCommand.Happened() {
 			config.Remove()
-		} else {
-			config.Init(*dontEnableFlag, *forceFlag)
 		}
 	}
 	if listenCommand.Happened() {
