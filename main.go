@@ -5,6 +5,7 @@ import (
 	"github.com/Streamer272/ipctl/config"
 	"github.com/Streamer272/ipctl/handle_error"
 	"github.com/Streamer272/ipctl/listener"
+	"github.com/Streamer272/ipctl/systemctl"
 	"github.com/akamensky/argparse"
 	"os"
 	"runtime"
@@ -29,6 +30,14 @@ func main() {
 
 	listenCommand := parser.NewCommand("listen", "Listen to IP change")
 
+	enableCommand := parser.NewCommand("enable", "Enable listening service")
+	disableCommand := parser.NewCommand("disable", "Disable listening service")
+	statusCommand := parser.NewCommand("status", "Status of listening service")
+	startCommand := parser.NewCommand("start", "Start listening service")
+	stopCommand := parser.NewCommand("stop", "Stop listening service")
+	restartCommand := parser.NewCommand("restart", "Restart listening service")
+	reloadCommand := parser.NewCommand("reload", "Reload listening service")
+
 	versionFlag := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
 
 	err := parser.Parse(os.Args)
@@ -37,7 +46,7 @@ func main() {
 		os.Exit(0)
 	}
 	if *versionFlag || versionCommand.Happened() {
-		fmt.Printf("%v versionFlag %v\n", parser.GetName(), VERSION)
+		fmt.Printf("%v version %v\n", parser.GetName(), VERSION)
 		os.Exit(0)
 	}
 
@@ -54,5 +63,27 @@ func main() {
 		handle_error.HandleError(err)
 
 		listener.Listen(config.Get("command"), interval)
+	}
+
+	if enableCommand.Happened() {
+		systemctl.Enable()
+	}
+	if disableCommand.Happened() {
+		systemctl.Disable()
+	}
+	if statusCommand.Happened() {
+		systemctl.Status()
+	}
+	if startCommand.Happened() {
+		systemctl.Start()
+	}
+	if stopCommand.Happened() {
+		systemctl.Stop()
+	}
+	if restartCommand.Happened() {
+		systemctl.Restart()
+	}
+	if reloadCommand.Happened() {
+		systemctl.Reload()
 	}
 }
