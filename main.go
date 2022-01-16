@@ -23,6 +23,7 @@ func main() {
 
 	helpCommand := parser.NewCommand("help", "Display help message")
 	versionCommand := parser.NewCommand("version", "Display program version")
+	versionFlag := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
 
 	configCommand := parser.NewCommand("config", "Manage configuration")
 	getCommand := configCommand.NewCommand("get", "Show current configuration")
@@ -33,8 +34,6 @@ func main() {
 	initConfigCommand := configCommand.NewCommand("init", "Initialize configuration")
 	rewriteCommand := configCommand.NewCommand("rewrite", "Rewrite configuration to default")
 	removeConfigCommand := configCommand.NewCommand("remove", "Remove configuration")
-
-	listenCommand := parser.NewCommand("listen", "Listen to IP change")
 
 	serviceCommand := parser.NewCommand("service", "Manage service")
 	initServiceCommand := serviceCommand.NewCommand("init", "Initialize service")
@@ -48,7 +47,7 @@ func main() {
 	restartCommand := serviceCommand.NewCommand("restart", "Restart listening service")
 	reloadCommand := serviceCommand.NewCommand("reload", "Reload listening service")
 
-	versionFlag := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
+	listenCommand := parser.NewCommand("listen", "Listen to IP change")
 
 	err := parser.Parse(os.Args)
 	if err != nil || helpCommand.Happened() {
