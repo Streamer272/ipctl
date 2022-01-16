@@ -16,7 +16,7 @@ const VERSION = "1.0"
 
 func main() {
 	if runtime.GOOS != "linux" {
-		fmt.Printf("ipctl only available on linux\n")
+		fmt.Printf("ipctl is only available on linux\n")
 		os.Exit(1)
 	}
 
@@ -29,6 +29,9 @@ func main() {
 	dontEnableFlag := initCommand.Flag("D", "dont-enable", &argparse.Options{Required: false, Help: "Don't enable systemctl service", Default: false})
 
 	listenCommand := parser.NewCommand("listen", "Listen to IP change")
+
+	setCommand := parser.NewCommand("set", "Update configuration")
+	setCommand.String("n", "name", &argparse.Options{Required: true})
 
 	enableCommand := parser.NewCommand("enable", "Enable listening service")
 	disableCommand := parser.NewCommand("disable", "Disable listening service")
