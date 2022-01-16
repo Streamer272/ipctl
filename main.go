@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Streamer272/ipctl/config"
+	"github.com/Streamer272/ipctl/constants"
 	"github.com/Streamer272/ipctl/handle_error"
 	"github.com/Streamer272/ipctl/listener"
 	"github.com/Streamer272/ipctl/systemctl"
@@ -11,8 +12,6 @@ import (
 	"runtime"
 	"strconv"
 )
-
-const VERSION = "1.0"
 
 func main() {
 	if runtime.GOOS != "linux" {
@@ -50,7 +49,7 @@ func main() {
 		os.Exit(0)
 	}
 	if *versionFlag || versionCommand.Happened() {
-		fmt.Printf("%v version %v\n", parser.GetName(), VERSION)
+		fmt.Printf("%v version %v\n", parser.GetName(), constants.VERSION)
 		os.Exit(0)
 	}
 

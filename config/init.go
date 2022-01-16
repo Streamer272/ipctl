@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"github.com/Streamer272/ipctl/constants"
 	"github.com/Streamer272/ipctl/handle_error"
 	"github.com/Streamer272/ipctl/options"
 	"io/ioutil"
@@ -25,7 +26,7 @@ func Init(dontEnable bool, force bool) {
 			handle_error.HandleError(err)
 		}
 
-		err := os.Mkdir("/etc/ipctl", 744)
+		err := os.Mkdir("/etc/ipctl", constants.PERMS)
 		handle_error.HandleError(err)
 	}
 
@@ -33,7 +34,7 @@ func Init(dontEnable bool, force bool) {
 		optStr, err := json.Marshal(options.Default())
 		handle_error.HandleError(err)
 
-		err = ioutil.WriteFile("/etc/ipctl/ipctl.json", []byte(optStr), 744)
+		err = ioutil.WriteFile("/etc/ipctl/ipctl.json", []byte(optStr), constants.PERMS)
 		handle_error.HandleError(err)
 	}
 
@@ -51,7 +52,7 @@ func Init(dontEnable bool, force bool) {
 			"ExecStart=ipctl listen\n\n"+
 			"[Install]\n"+
 			"WantedBy=multi-currentUser.target\n",
-		), 744)
+		), constants.PERMS)
 		handle_error.HandleError(err)
 
 		if !dontEnable {
