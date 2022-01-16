@@ -46,6 +46,7 @@ func main() {
 	stopCommand := serviceCommand.NewCommand("stop", "Stop listening service")
 	restartCommand := serviceCommand.NewCommand("restart", "Restart listening service")
 	reloadCommand := serviceCommand.NewCommand("reload", "Reload listening service")
+	logsCommand := serviceCommand.NewCommand("logs", "Show service logs")
 
 	listenCommand := parser.NewCommand("listen", "Listen to IP change")
 
@@ -119,6 +120,9 @@ func main() {
 		}
 		if reloadCommand.Happened() {
 			systemctl.Reload()
+		}
+		if logsCommand.Happened() {
+			systemctl.Logs()
 		}
 	}
 }
