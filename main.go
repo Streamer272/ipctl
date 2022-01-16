@@ -30,7 +30,7 @@ func main() {
 	field := getCommand.String("f", "field", &argparse.Options{Required: false, Help: "Field to get", Default: ""})
 	setCommand := configCommand.NewCommand("set", "Update configuration")
 	name := setCommand.String("n", "name", &argparse.Options{Required: true, Help: "Name of field to update"})
-	value := setCommand.String("v", "value", &argparse.Options{Required: true, Help: "New value"})
+	value := setCommand.String("V", "value", &argparse.Options{Required: true, Help: "New value"})
 	initConfigCommand := configCommand.NewCommand("init", "Initialize configuration")
 	rewriteCommand := configCommand.NewCommand("rewrite", "Rewrite configuration to default")
 	removeConfigCommand := configCommand.NewCommand("remove", "Remove configuration")
@@ -86,6 +86,7 @@ func main() {
 			config.Remove()
 		}
 	}
+
 	if listenCommand.Happened() {
 		interval, err := strconv.Atoi(config.Get("interval"))
 		handle_error.HandleError(err)

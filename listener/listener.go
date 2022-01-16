@@ -2,8 +2,9 @@ package listener
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"github.com/Streamer272/ipctl/handle_error"
+	"github.com/Streamer272/ipctl/config"
 	"github.com/Streamer272/ipctl/logger"
 	"io/ioutil"
 	"net/http"
@@ -13,22 +14,7 @@ import (
 	"time"
 )
 
-// TODO: save me to file
 var ip string = ""
-
-type Response struct {
-	Success bool   `json:"Success"`
-	IP      string `json:"ip"`
-	Type    string `json:"type"`
-}
-
-type RequestNotSuccessful struct {
-	response Response
-}
-
-func (err RequestNotSuccessful) Error() string {
-	return err.response.IP
-}
 
 func GetCurrentIp() (string, error) {
 	response, err := http.Get("https://api.my-ip.io/ip.json")
@@ -41,61 +27,74 @@ func GetCurrentIp() (string, error) {
 		return "", err
 	}
 
-	var data Response
+	var data struct {
+		Success bool   `json:"success"`
+		IP      string `json:"ip"`
+		Type    string `json:"type"`
+	}
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		return "", err
 	}
 
 	if data.Success != true {
-		return "", RequestNotSuccessful{response: data}
+		return "", errors.New("request not successful")
 	}
 
 	return data.IP, nil
 }
 
-func didIpChange() (bool, error) {
-	currentIp, err := GetCurrentIp()
-	if err != nil {
-		return false, err
-	}
-
-	if ip == "" {
-		ip = currentIp
-		return false, nil
-	}
-	if ip != currentIp {
-		ip = currentIp
-		return true, nil
-	}
-
-	return false, nil
-}
-
 func Listen(command string, interval int) {
 	log := logger.NewLogger()
 
+	fmt.Printf("i = %v\n", interval)
+	log.Log("INFO", fmt.Sprintf("Listening"))
+
+	defer func() {
+		if err := recover(); err != nil {
+			log.Log("ERROR", fmt.Sprintf("Error occurred while listening to IP change (%v)\n", err))
+			Listen(command, interval)
+		}
+	}()
+
 	for {
-		changed, err := didIpChange()
+		fmt.Printf("loop\n")
+		newIp, err := GetCurrentIp()
 		if err != nil {
-			log.Log("ERROR", fmt.Sprintf("Error occurred while listening to IP change, err = %v\n", err))
+			log.Log("ERROR", fmt.Sprintf("Error occurred while retrieving current ip (%v)\n", err))
+		}
+		fmt.Printf("%v == %v\n", newIp, ip)
+
+		if newIp == ip {
+			time.Sleep(time.Millisecond * time.Duration(interval))
+			continue
 		}
 
-		if changed {
-			err := os.Setenv("IP", ip)
-			handle_error.HandleError(err)
+		config.Set("current", ip)
 
-			command := exec.Command("/usr/bin/bash", "-c", fmt.Sprintf("\"%v\"", strings.ReplaceAll(command, "\"", "\\\"")))
-			command.Stdin = os.Stdin
-			command.Stdout = os.Stdout
-			command.Stderr = os.Stderr
-			err = command.Run()
-			if err != nil {
-				log.Log("ERROR", fmt.Sprintf("Error occurred while listening to IP change, err = %v\n", err))
-			}
-
-			log.Log("INFO", fmt.Sprintf("IP address changed"))
+		if ip == "" {
+			ip = newIp
+			time.Sleep(time.Millisecond * time.Duration(interval))
+			continue
 		}
+
+		ip = newIp
+
+		err = os.Setenv("IP", ip)
+		if err != nil {
+			log.Log("ERROR", fmt.Sprintf("Error occurred while chaning ENV (%v)\n", err))
+		}
+
+		command := exec.Command("/usr/bin/bash", "-c", fmt.Sprintf("\"%v\"", strings.ReplaceAll(command, "\"", "\\\"")))
+		command.Stdin = os.Stdin
+		command.Stdout = os.Stdout
+		command.Stderr = os.Stderr
+		err = command.Run()
+		if err != nil {
+			log.Log("ERROR", fmt.Sprintf("Error occurred while running command (%v)\n", err))
+		}
+
+		log.Log("INFO", fmt.Sprintf("IP address changed"))
 
 		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
