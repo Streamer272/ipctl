@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Streamer272/ipctl/config"
-	"github.com/Streamer272/ipctl/logger"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
-	"strings"
 	"time"
+
+	"github.com/Streamer272/ipctl/config"
+	"github.com/Streamer272/ipctl/logger"
 )
 
 var ip string = ""
@@ -47,7 +47,6 @@ func GetCurrentIp() (string, error) {
 func Listen(command string, interval int) {
 	log := logger.NewLogger()
 
-	fmt.Printf("i = %v\n", interval)
 	log.Log("INFO", fmt.Sprintf("Listening"))
 
 	defer func() {
@@ -58,11 +57,11 @@ func Listen(command string, interval int) {
 	}()
 
 	for {
-		fmt.Printf("loop\n")
 		newIp, err := GetCurrentIp()
 		if err != nil {
 			log.Log("ERROR", fmt.Sprintf("Error occurred while retrieving current ip (%v)\n", err))
 		}
+
 		fmt.Printf("%v == %v\n", newIp, ip)
 
 		if newIp == ip {
@@ -85,7 +84,7 @@ func Listen(command string, interval int) {
 			log.Log("ERROR", fmt.Sprintf("Error occurred while chaning ENV (%v)\n", err))
 		}
 
-		command := exec.Command("/usr/bin/bash", "-c", fmt.Sprintf("\"%v\"", strings.ReplaceAll(command, "\"", "\\\"")))
+		command := exec.Command("/usr/bin/bash", command)
 		command.Stdin = os.Stdin
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
