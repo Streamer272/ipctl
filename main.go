@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"runtime"
+	"strconv"
+
 	"github.com/Streamer272/ipctl/config"
 	"github.com/Streamer272/ipctl/constants"
 	"github.com/Streamer272/ipctl/handle_error"
 	"github.com/Streamer272/ipctl/listener"
 	"github.com/Streamer272/ipctl/systemctl"
 	"github.com/akamensky/argparse"
-	"os"
-	"runtime"
-	"strconv"
 )
 
 func main() {
@@ -24,6 +25,8 @@ func main() {
 	helpCommand := parser.NewCommand("help", "Display help message")
 	versionCommand := parser.NewCommand("version", "Display program version")
 	versionFlag := parser.Flag("v", "version", &argparse.Options{Required: false, Help: "Display program version", Default: false})
+
+	ipCommand := parser.NewCommand("ip", "Get current IP")
 
 	configCommand := parser.NewCommand("config", "Manage configuration")
 	getCommand := configCommand.NewCommand("get", "Show current configuration")
@@ -57,6 +60,16 @@ func main() {
 	}
 	if *versionFlag || versionCommand.Happened() {
 		fmt.Printf("%v version %v\n", parser.GetName(), constants.VERSION)
+		os.Exit(0)
+	}
+
+	if ipCommand.Happened() {
+		ip, err := listener.GetCurrentIp()
+		if err != nil {
+			fmt.Printf("Couldn't get IP, error: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("%v", ip)
 		os.Exit(0)
 	}
 
