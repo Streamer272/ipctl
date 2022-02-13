@@ -12,6 +12,7 @@ import (
 
 	"github.com/Streamer272/ipctl/config"
 	"github.com/Streamer272/ipctl/logger"
+	"github.com/Streamer272/ipctl/handle_error"
 )
 
 var ip string = ""
@@ -97,4 +98,33 @@ func Listen(command string, interval int) {
 
 		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
+}
+
+func Update(command string) {
+	log := logger.NewLogger()
+
+	log.Log("INFO", fmt.Sprintf("Updating DNS records"))
+
+	ip, err := GetCurrentIp()
+	handle_error.HandleError(err)
+	if ip == "" {
+		log.Log("ERROR", fmt.Sprintf("IP (%v) is undefined", ip))
+	}
+
+	config.Set("current", ip)
+	err = os.Setenv("IP", ip)
+	if err != nil {
+		log.Log("ERROR", fmt.Sprintf("Error occurred while changing ENV (%v)\n", ip))
+	}
+
+	command := exec.Command("/usr/bin/bash", command)
+	command.Stdin = os.Stdin
+	command.Stdout = os.Stdout
+	command.Stderr = os.Stderr
+	err = command.Run()
+	if err != nil {
+		log.Log("ERROR", fmt.Sprintf("Error occurred while running command (%v)\n", err))
+	}
+
+	log.Log("INFO", fmt.Sprintf("DNS records updated"))
 }

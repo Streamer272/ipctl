@@ -52,6 +52,7 @@ func main() {
 	logsCommand := serviceCommand.NewCommand("logs", "Show service logs")
 
 	listenCommand := parser.NewCommand("listen", "Listen to IP change")
+	updateCommand := parer.NewCommand("update", "Update DNS IP address")
 
 	err := parser.Parse(os.Args)
 	if err != nil || helpCommand.Happened() {
@@ -100,13 +101,6 @@ func main() {
 		}
 	}
 
-	if listenCommand.Happened() {
-		interval, err := strconv.Atoi(config.Get("interval"))
-		handle_error.HandleError(err)
-
-		listener.Listen(config.Get("command"), interval)
-	}
-
 	if serviceCommand.Happened() {
 		if initServiceCommand.Happened() {
 			systemctl.Init(*enableFlag)
@@ -138,5 +132,15 @@ func main() {
 		if logsCommand.Happened() {
 			systemctl.Logs()
 		}
+	}
+
+	if listenCommand.Happened() {
+		interval, err := strconv.Atoi(config.Get("interval"))
+		handle_error.HandleError(err)
+
+		listener.Listen(config.Get("command"), interval)
+	}
+	if updateCommand.Happened() {
+		listener.Update(config.Get("command"))
 	}
 }
