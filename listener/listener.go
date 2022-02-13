@@ -117,11 +117,11 @@ func Update(command string) {
 		log.Log("ERROR", fmt.Sprintf("Error occurred while changing ENV (%v)\n", ip))
 	}
 
-	command := exec.Command("/usr/bin/bash", command)
-	command.Stdin = os.Stdin
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
-	err = command.Run()
+	execCommand := exec.Command("/usr/bin/bash", command)
+	execCommand.Stdin = os.Stdin
+	execCommand.Stdout = os.Stdout
+	execCommand.Stderr = os.Stderr
+	err = execCommand.Run()
 	if err != nil {
 		log.Log("ERROR", fmt.Sprintf("Error occurred while running command (%v)\n", err))
 	}
