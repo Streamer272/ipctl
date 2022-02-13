@@ -10,7 +10,7 @@ func HandleError(err error) {
 		return
 	}
 
-	err := fmt.Errorf("%v\n", err)
+	err = fmt.Errorf("%v\n", err)
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	}
