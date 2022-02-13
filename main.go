@@ -52,7 +52,7 @@ func main() {
 	logsCommand := serviceCommand.NewCommand("logs", "Show service logs")
 
 	listenCommand := parser.NewCommand("listen", "Listen to IP change")
-	updateCommand := parer.NewCommand("update", "Update DNS IP address")
+	updateCommand := parser.NewCommand("update", "Update DNS IP address")
 
 	err := parser.Parse(os.Args)
 	if err != nil || helpCommand.Happened() {
