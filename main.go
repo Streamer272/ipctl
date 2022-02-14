@@ -11,6 +11,7 @@ import (
 	"github.com/Streamer272/ipctl/config"
 	"github.com/Streamer272/ipctl/constants"
 	"github.com/Streamer272/ipctl/listener"
+	"github.com/Streamer272/ipctl/systemctl"
 	cli "github.com/jawher/mow.cli"
 )
 
@@ -66,6 +67,25 @@ func main() {
 
 		cmd.Action = func() {
 			fmt.Printf("Edit %v to change configuration\n", strings.Join(config.GetConfigFiles(), ", "))
+		}
+	})
+
+	app.Command("service", "Manage ipctl service", func(cmd *cli.Cmd) {
+		cmdToDo := cmd.StringOpt("x execute", "", "Command to execute with systemctl")
+		noOutput := cmd.BoolOpt("n no-output", false, "Not to display output")
+
+		cmd.Command("init", "Initialize ipctl service", func(cmd *cli.Cmd) {
+			noEnable := cmd.BoolOpt("n no-enable", false, "Not to enable service")
+
+			cmd.Action = func() {
+				systemctl.Init(!*noEnable)
+			}
+		})
+
+		cmd.Action = func() {
+			if *cmdToDo != "" {
+				systemctl.Exec(*cmdToDo, !*noOutput)
+			}
 		}
 	})
 
