@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/Streamer272/cool/check"
 	"github.com/zpatrick/go-config"
 )
@@ -25,7 +27,8 @@ func GetConfigFiles() string {
 
 	output := ""
 	for provider := range content.Providers {
-		output += string(provider)
+		fmt.Printf("provider: %v\n", provider)
+		output += fmt.Sprint(provider)
 	}
 
 	return output

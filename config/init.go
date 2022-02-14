@@ -1,42 +1,19 @@
 package config
 
 import (
-	"encoding/json"
-	"github.com/Streamer272/ipctl/constants"
-	"github.com/Streamer272/ipctl/handle_error"
-	"github.com/Streamer272/ipctl/helpers"
-	"github.com/Streamer272/ipctl/options"
 	"io/ioutil"
 	"os"
+
+	"github.com/Streamer272/cool/check"
+	"github.com/Streamer272/ipctl/constants"
 )
 
-func Init(rewrite bool) {
-	if helpers.PathExists("/etc/ipctl/ipctl.json") && !rewrite {
-		return
-	}
-
-	if !helpers.PathExists("/etc/ipctl") || rewrite {
-		if helpers.PathExists("/etc/ipctl") && rewrite {
-			err := os.RemoveAll("/etc/ipctl")
-			handle_error.HandleError(err)
-		}
-
+func Init() {
+	if _, err := os.Stat("/etc/ipctl"); err != nil {
 		err := os.Mkdir("/etc/ipctl", constants.PERMS)
-		handle_error.HandleError(err)
+		check.Check(err)
 	}
 
-	if !helpers.PathExists("/etc/ipctl/ipctl.json") || rewrite {
-		optStr, err := json.Marshal(options.Default())
-		handle_error.HandleError(err)
-
-		err = ioutil.WriteFile("/etc/ipctl/ipctl.json", []byte(optStr), constants.PERMS)
-		handle_error.HandleError(err)
-	}
-}
-
-func Remove() {
-	if helpers.PathExists("/etc/ipctl") {
-		err := os.RemoveAll("/etc/ipctl")
-		handle_error.HandleError(err)
-	}
+	err := ioutil.WriteFile("/etc/ipctl/config", []byte(constants.DEFAULT_CONFIG), constants.PERMS)
+	check.Check(err)
 }

@@ -56,6 +56,18 @@ func main() {
 		}
 	})
 
+	app.Command("config", "Manage ipctl config", func(cmd *cli.Cmd) {
+		cmd.Command("init", "Initialize ipctl config", func(cmd *cli.Cmd) {
+			cmd.Action = func() {
+				config.Init()
+			}
+		})
+
+		cmd.Action = func() {
+			fmt.Printf("Edit %v to change configuration\n", config.GetConfigFiles())
+		}
+	})
+
 	app.Run(os.Args)
 
 	/*
