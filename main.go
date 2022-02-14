@@ -46,9 +46,9 @@ func main() {
 
 	app.Command("listen", "Listen for IP change", func(cmd *cli.Cmd) {
 		cmd.Action = func() {
-			interval, err := strconv.Atoi(config.Get("interval"))
+			interval, err := strconv.Atoi(config.Get("DEFAULT.interval"))
 			check.Check(err)
-			listener.Listen(config.Get("command"), interval)
+			listener.Listen(config.Get("DEFAULT.callback_file"), interval)
 		}
 	})
 

@@ -3,17 +3,15 @@ package listener
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"time"
-
-	"github.com/Streamer272/cool/check"
 )
 
-var ip string = ""
+var currentIp = ""
 
 func GetCurrentIp() (string, error) {
 	response, err := http.Get("https://api.my-ip.io/ip.json")
@@ -44,41 +42,41 @@ func GetCurrentIp() (string, error) {
 }
 
 func Listen(command string, interval int) {
-	//log := logger.NewLogger()
-
-	//log.Log("INFO", fmt.Sprintf("Listening"))
+	log.Printf("Listening to IP change\n")
 
 	defer func() {
 		if err := recover(); err != nil {
-			//log.Log("ERROR", fmt.Sprintf("Error occurred while listening to IP change (%v)\n", err))
+			log.Printf("Fatal error occurred: %v\n", err)
 			Listen(command, interval)
 		}
 	}()
 
 	for {
-		newIp, err := GetCurrentIp()
-		if err != nil {
-			//log.Log("ERROR", fmt.Sprintf("Error occurred while retrieving current ip (%v)\n", err))
+		ip, err := GetCurrentIp()
+		if err != nil || ip == "" {
+			log.Printf("Error occurred while fetching IP: %v\n", err)
+			continue
 		}
 
-		fmt.Printf("%v == %v\n", newIp, ip)
+		log.Printf("Current IP: %v\n", ip)
 
-		if newIp == ip {
+		if ip == currentIp {
 			time.Sleep(time.Millisecond * time.Duration(interval))
 			continue
 		}
 
-		if ip == "" {
-			ip = newIp
+		if currentIp == "" {
+			currentIp = ip
 			time.Sleep(time.Millisecond * time.Duration(interval))
 			continue
 		}
 
-		ip = newIp
+		currentIp = ip
 
-		err = os.Setenv("IP", ip)
+		err = os.Setenv("IP", currentIp)
 		if err != nil {
-			//log.Log("ERROR", fmt.Sprintf("Error occurred while chaning ENV (%v)\n", err))
+			log.Printf("Error occurred while changing ENV: %v -> Cannot execute callback file\n", err)
+			continue
 		}
 
 		command := exec.Command("/usr/bin/bash", command)
@@ -87,29 +85,30 @@ func Listen(command string, interval int) {
 		command.Stderr = os.Stderr
 		err = command.Run()
 		if err != nil {
-			//log.Log("ERROR", fmt.Sprintf("Error occurred while running command (%v)\n", err))
+			log.Printf("Error occurred while executing callback file: %v\n", err)
+			time.Sleep(time.Millisecond * time.Duration(interval))
+			continue
 		}
 
-		//log.Log("INFO", fmt.Sprintf("IP address changed"))
-
+		log.Printf("IP address changed")
 		time.Sleep(time.Millisecond * time.Duration(interval))
 	}
 }
 
 func Update(command string) {
-	//log := logger.NewLogger()
-
-	//log.Log("INFO", fmt.Sprintf("Updating DNS records"))
+	log.Printf("Updating DNS' records, sit tight...")
 
 	ip, err := GetCurrentIp()
-	check.Check(err)
-	if ip == "" {
+	if err != nil || ip == "" {
 		//log.Log("ERROR", fmt.Sprintf("IP (%v) is undefined", ip))
+		log.Printf("Error occurred while fetching IP: %v\n", err)
+		return
 	}
 
 	err = os.Setenv("IP", ip)
 	if err != nil {
-		//log.Log("ERROR", fmt.Sprintf("Error occurred while changing ENV (%v)\n", ip))
+		log.Printf("Error occurred while changing ENV: %v -> Cannot execute callback file\n", err)
+		return
 	}
 
 	execCommand := exec.Command("/usr/bin/bash", command)
@@ -118,8 +117,9 @@ func Update(command string) {
 	execCommand.Stderr = os.Stderr
 	err = execCommand.Run()
 	if err != nil {
-		//log.Log("ERROR", fmt.Sprintf("Error occurred while running command (%v)\n", err))
+		log.Printf("Error occurred while executing callback file: %v\n", err)
+		return
 	}
 
-	//log.Log("INFO", fmt.Sprintf("DNS records updated"))
+	log.Printf("Error occurred while executing callback file: %v\n", err)
 }

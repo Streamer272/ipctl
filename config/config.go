@@ -5,13 +5,9 @@ import (
 	"github.com/zpatrick/go-config"
 )
 
-var (
-	EtcFile  = config.NewINIFile("/etc/ipctl/config")
-	HomeFile = config.NewINIFile("$HOME/.config/ipctl/config")
-)
-
 func Get(name string) string {
-	content := config.NewConfig([]config.Provider{EtcFile, HomeFile})
+	etcFile := config.NewINIFile("/etc/ipctl/config")
+	content := config.NewConfig([]config.Provider{etcFile})
 	err := content.Load()
 	check.Check(err)
 
@@ -22,5 +18,5 @@ func Get(name string) string {
 }
 
 func GetConfigFiles() []string {
-	return []string{"/etc/ipctl/config", "$HOME/.config/ipctl/config"}
+	return []string{"/etc/ipctl/config"}
 }
