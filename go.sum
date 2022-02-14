@@ -1,3 +1,5 @@
+github.com/Streamer272/cool v0.0.0-20220204172029-f3102f6401e5 h1:U0Cw/9410HVikKOlN8RRxUNnNiRsZQjTzCsf2MvHhYE=
+github.com/Streamer272/cool v0.0.0-20220204172029-f3102f6401e5/go.mod h1:L6uibxJ0kNEmX1vTAHJN2P6brIdFF2U8xW17SrrfeEc=
 github.com/akamensky/argparse v1.3.1 h1:kP6+OyvR0fuBH6UhbE6yh/nskrDEIQgEA1SUXDPjx4g=
 github.com/akamensky/argparse v1.3.1/go.mod h1:S5kwC7IuDcEr5VeXtGPRVZ5o/FdhcMlQz4IZQuw64xA=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -8,6 +8,7 @@ require (
 )
 
 require (
+	github.com/Streamer272/cool v0.0.0-20220204172029-f3102f6401e5 // indirect
 	github.com/jawher/mow.cli v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
