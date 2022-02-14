@@ -5,6 +5,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"strings"
 
 	"github.com/Streamer272/cool/check"
 	"github.com/Streamer272/ipctl/config"
@@ -64,7 +65,7 @@ func main() {
 		})
 
 		cmd.Action = func() {
-			fmt.Printf("Edit %v to change configuration\n", config.GetConfigFiles())
+			fmt.Printf("Edit %v to change configuration\n", strings.Join(config.GetConfigFiles(), ", "))
 		}
 	})
 

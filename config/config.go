@@ -1,15 +1,17 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/Streamer272/cool/check"
 	"github.com/zpatrick/go-config"
 )
 
+var (
+	EtcFile  = config.NewINIFile("/etc/ipctl/config")
+	HomeFile = config.NewINIFile("$HOME/.config/ipctl/config")
+)
+
 func Get(name string) string {
-	etcFile := config.NewINIFile("/etc/ipctl/config")
-	content := config.NewConfig([]config.Provider{etcFile})
+	content := config.NewConfig([]config.Provider{EtcFile, HomeFile})
 	err := content.Load()
 	check.Check(err)
 
@@ -19,17 +21,6 @@ func Get(name string) string {
 	return value
 }
 
-func GetConfigFiles() string {
-	etcFile := config.NewINIFile("/etc/ipctl/config")
-	content := config.NewConfig([]config.Provider{etcFile})
-	err := content.Load()
-	check.Check(err)
-
-	output := ""
-	for provider := range content.Providers {
-		fmt.Printf("provider: %v\n", provider)
-		output += fmt.Sprint(provider)
-	}
-
-	return output
+func GetConfigFiles() []string {
+	return []string{"/etc/ipctl/config", "$HOME/.config/ipctl/config"}
 }
