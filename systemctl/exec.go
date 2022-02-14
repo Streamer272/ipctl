@@ -14,3 +14,11 @@ func Exec(command string, output bool) {
 	}
 	cmd.Run()
 }
+
+func Logs() {
+	cmd := exec.Command("journalctl", "-u", "ipctl.service")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
+}
