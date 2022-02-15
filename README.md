@@ -2,12 +2,17 @@
 
 Listen to IP change and change your DNS' records dynamically
 
----
+## Table of content
+- [Features](https://github.com/Streamer272/ipctl#features)
+- [Installation](https://github.com/Streamer272/ipctl#installation)
+    - [Build from source](https://github.com/Streamer272/ipctl#build-from-source)
+- [Quick start](https://github.com/Streamer272/ipctl#quick-start)
+    - [How does it work](https://github.com/Streamer272/ipctl#how-does-it-work)
 
 ## Features
-0. Lightweight - can easily run even on Raspberry Pi!
-0. Easy to set up - `ipctl` can set up basic configuration and `systemctl` service itself, no editing needed
-0. You don't have to worry about dynamic IP ever again!
+- **Lightweight** - can easily run even on Raspberry Pi!
+- **Easy to set up** - `ipctl` can set up basic configuration and `systemctl` service itself, no editing needed
+- **Just works** - you don't have to worry about dynamic IP ever again!
 
 ## Installation
 Check out [Releases](https://github.com/Streamer272/ipctl/releases) for latest versions.
@@ -22,7 +27,7 @@ But watch out, you have to add `$HOME/go/bin/` to root path
 
 #### Requirements:
 
-0. Go 17+
+- Go 17+
 
 Clone the repository with `git`
 ```
@@ -32,8 +37,6 @@ Install `ipctl` with `install.sh` script
 ```
 bash ./install.sh
 ```
-
----
 
 ## Quick start
 
@@ -57,9 +60,11 @@ To make `ipctl` start every time you start your computer in background, you need
 ```
 systemctl enable --now ipctl
 ```
+For those less familiar with `systemctl`, `--now` option starts the service automatically after enabling
 
 ### How does it work
 
 Every `interval` (located in config file) milliseconds, a request on `https://api.my-ip.io/ip.json` is made, finding out current IP address. If IP address has changed, `callback_file` will be called with `bash` (be sure to put `#!/usr/bin/bash` on the first line of your callback file). Here, new IP will be provided as environmental variable `IP` (in `python`, you can read this value with `os.getenv("IP")`).
+
 Mind that this service only runs if you are connected to the internet, so you don't have to worry about not having connection in your callback file.
 
