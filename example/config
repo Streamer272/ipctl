@@ -1,0 +1,4 @@
+# run file (new ip will be passed in `IP` env)
+callback_file=$HOME/change-ip.bash
+# 60 seconds
+interval=60000
