@@ -12,7 +12,7 @@ Listen to IP change and change your DNS' records dynamically
 ## Features
 - **Lightweight** - can easily run even on Raspberry Pi!
 - **Easy to set up** - `ipctl` can set up basic configuration and `systemctl` service itself, no editing needed
-- **Just works** - you don't have to worry about dynamic IP ever again!
+- **Painless** - you don't have to worry about dynamic IP ever again!
 
 ## Installation
 Check out [Releases](https://github.com/Streamer272/ipctl/releases) for latest versions.
@@ -62,9 +62,10 @@ systemctl enable --now ipctl
 ```
 For those less familiar with `systemctl`, `--now` option starts the service automatically after enabling
 
+Check out [example configuration](https://github.com/Streamer272/ipctl/tree/master/example) to get the idea
+
 ### How does it work
 
 Every `interval` (located in config file) milliseconds, a request on `https://api.my-ip.io/ip.json` is made, finding out current IP address. If IP address has changed, `callback_file` will be called with `bash` (be sure to put `#!/usr/bin/bash` on the first line of your callback file). Here, new IP will be provided as environmental variable `IP` (in `python`, you can read this value with `os.getenv("IP")`).
 
 Mind that this service only runs if you are connected to the internet, so you don't have to worry about not having connection in your callback file.
-
