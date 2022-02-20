@@ -54,7 +54,7 @@ func main() {
 
 	app.Command("update", "Update DNS' records", func(cmd *cli.Cmd) {
 		cmd.Action = func() {
-			listener.Update(config.Get("command"))
+			listener.Update(config.Get("DEFAULT.callback_file"))
 		}
 	})
 
